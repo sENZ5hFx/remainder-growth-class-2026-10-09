@@ -1,0 +1,32 @@
+{
+  "discovery_id": "RGC-2026-10-09",
+  "session_id": "20261009-1340-rgc",
+  "timestamp": "2026-10-09T17:40:00Z",
+  "author": "Haley Ann Bird",
+  "github": "sENZ5hFx",
+  "agent": "Grok by xAI — structural synthesis aid only; non-ownership",
+  "class": "Remainder-Growth Class",
+  "status": "research-stage classification",
+  "not": [
+    "physical discovery",
+    "peer review",
+    "patent",
+    "priority date",
+    "150 per-realm mints"
+  ],
+  "why_this_session": "high-agency-partner rule 7. DPC-2026-10-07 queued Remainder-Growth and did not assign a Discovery ID.",
+  "kill_rule": "Remainder channel saturated (alpha <= 0 or nested rarefaction slope ~ 0).",
+  "leftover_not_minted": "False-Saturation Class",
+  "novelty_capped": 0.29,
+  "coherence": 0.80,
+  "ip_readiness": "Logged",
+  "prior_art_verified": true,
+  "result_sha256": "862b915ba6e769b3cc06d633f9ee37fa7e0f7ba35498cac9a5c4a6286a47bf5f",
+  "primary": {
+    "id": "unbinned_widening_gap",
+    "score": 9.6657,
+    "source_doi": "10.1038/s41564-026-02314-6"
+  },
+  "controls_ok": true,
+  "prompt_received": "Complete Realm Taxonomy / every domain. Closed by archive rule: one leftover class, realm coverage inside it, no 150-mint."
+}

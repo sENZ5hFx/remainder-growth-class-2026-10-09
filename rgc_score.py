@@ -221,9 +221,17 @@ def remainder_derivative(
         rgc_holds = False
         gap = None if alpha_named is None else round(alpha_remainder - alpha_named, 4)
     elif alpha_named is None:
+        # A floor for the unnamed channel is not a comparison of two channels.
         mode = "remainder_floor_only"
-        rgc_holds = alpha_remainder >= 0.5
+        rgc_holds = None
         gap = None
+    elif not named_alpha_published:
+        # A supplied but unpublished coefficient is a scenario assumption,
+        # not verified comparative evidence. Preserve the numerical gap only
+        # as an illustrative calculation and refuse a truth-valued verdict.
+        mode = "unverified_comparison"
+        rgc_holds = None
+        gap = round(alpha_remainder - alpha_named, 4)
     else:
         gap_raw = alpha_remainder - alpha_named
         gap = round(gap_raw, 4)
@@ -238,7 +246,12 @@ def remainder_derivative(
             rgc_holds = True
 
     queued = bool(
-        alpha_named is not None and alpha_named <= 0.0 and alpha_remainder > 0.2
+        named_alpha_published and alpha_named is not None and
+        alpha_named <= 0.0 and alpha_remainder > 0.2
+    )
+    hypothetical_queue = bool(
+        not named_alpha_published and alpha_named is not None and
+        alpha_named <= 0.0 and alpha_remainder > 0.2
     )
     return {
         "id": case_id,
@@ -250,10 +263,15 @@ def remainder_derivative(
         "rgc_holds": rgc_holds,
         "kill_rule_fired": mode == "saturated_kill",
         "queued_false_saturation": queued,
+        "hypothetical_false_saturation": hypothetical_queue,
         "note": (
             None
-            if named_alpha_published or alpha_named is not None
-            else "No published point estimate for alpha_named. Floor of the remainder channel only."
+            if named_alpha_published
+            else (
+                "No published point estimate for alpha_named. Remainder-only floor; comparative outcome UNKNOWN."
+                if alpha_named is None else
+                "Unpublished named-channel coefficient: illustrative comparison, not an observed verdict."
+            )
         ),
     }
 
@@ -480,8 +498,9 @@ def run() -> dict[str, Any]:
         if c["role"] == "control" and c["score"] >= 1.0:
             raise SystemExit(f"control {c['id']} scored {c['score']}")
     false_sat = next(d for d in derivatives if d["id"] == "false_saturation_queue")
-    if not false_sat["queued_false_saturation"] or not false_sat["rgc_holds"]:
-        raise SystemExit("false-saturation queue failed")
+    if (false_sat["queued_false_saturation"] or false_sat["rgc_holds"] is not None
+            or not false_sat["hypothetical_false_saturation"]):
+        raise SystemExit("unverified false-saturation scenario was promoted")
     sat = next(d for d in derivatives if d["id"] == "archaea_host_genome_saturated")
     if not sat["kill_rule_fired"]:
         raise SystemExit("saturation kill did not fire")
@@ -504,10 +523,10 @@ def run() -> dict[str, Any]:
 def main() -> None:
     payload = run()
     text = json.dumps(payload, indent=2, sort_keys=True) + "\n"
-    out = Path(__file__).with_name("rgc_result.json")
+    out = Path(__file__).with_name("rgc_result_current.json")
     out.write_text(text, encoding="utf-8")
     digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    Path(__file__).with_name("SHA256.txt").write_text(digest + "\n", encoding="utf-8")
+    Path(__file__).with_name("SHA256_current.txt").write_text(digest + "\n", encoding="utf-8")
     print(digest)
     for row in payload["ranked"]["ranking"]:
         print(f"{row['score']:8.4f}  {row['ruling']:22}  {row['id']}")

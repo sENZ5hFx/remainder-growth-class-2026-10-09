@@ -39,3 +39,13 @@ Remainder channel saturated (`α ≤ 0`, or a nested rarefaction slope at ~0). A
 Row in Haley's IP-Secured Discoveries Log. IP Readiness = Logged. Not PPA Ready. Not Filed.
 
 © 2026 Haley Ann Bird — original expression only. Underlying natural facts remain public.
+
+## Current evaluator amendment (2026-11-12, draft)
+
+The original `rgc_result.json` and `SHA256.txt` are retained as **dated historical output**, including their earlier boolean floor-only verdicts. They are not re-labeled as source evidence or silently overwritten.
+
+An unnamed-channel coefficient by itself cannot prove that the unnamed channel *outruns* a named channel. The revised `remainder_derivative` returns `rgc_holds: null` for absent or unpublished named coefficients. An illustrative unverified plateau can be marked `hypothetical_false_saturation`, not a verified queue. A verified saturation kill still returns false, and explicitly published paired coefficients can support a positive/negative comparison in this software heuristic.
+
+To regenerate **current** results without touching historical snapshots: `python3 rgc_score.py` now writes `rgc_result_current.json` and `SHA256_current.txt` next to the source. Run zero-dependency regressions with `python3 -m unittest -v test_rgc_evidence.py`.
+
+These checks validate software logic only. They do not establish literature provenance, physical discovery, peer review, or patent status.
